@@ -1,6 +1,17 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.EntityFrameworkCore;
+using MyBookingsWebApi.Data;
+using MyBookingsWebApi.Services;
 
-// Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
+/*
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+        npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)));
+*/
+builder.Services.AddScoped<ICsvUploadService,CsvUploadService>();   
+builder.Services.AddDbContextFactory<AppDbContext>(options =>
+    options.UseInMemoryDatabase("InMemoryDb"));
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
