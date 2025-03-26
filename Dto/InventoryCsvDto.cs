@@ -1,12 +1,11 @@
 ﻿namespace MyBookingsWebApi.Models
 {
-    public class Inventory
-
+    public class InventoryCsvDto
     {
-        public Guid Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public DateTime ExpirationDate { get; set; }
         public int RemainingCount { get; set; }
+        public DateTime ExpirationDate { get; set; }
+        
     }
 }
