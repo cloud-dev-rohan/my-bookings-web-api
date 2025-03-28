@@ -1,7 +1,9 @@
 ﻿using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
 using MyBookingsWebApi.Data;
 using MyBookingsWebApi.Models;
+using Newtonsoft.Json;
 using System.Globalization;
 
 namespace MyBookingsWebApi.Services
@@ -19,7 +21,12 @@ namespace MyBookingsWebApi.Services
         public async Task UploadMembersAsync(Stream csvStream)
         {
             using var reader = new StreamReader(csvStream);
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                PrepareHeaderForMatch = args => args.Header.ToLower() // Case-insensitive matching
+            };
+
+            using var csv = new CsvReader(reader, config);
 
             var records = new List<Member>();
 
@@ -34,7 +41,7 @@ namespace MyBookingsWebApi.Services
                     DateJoined = record.DateJoined
                 });
             }
-
+            Console.WriteLine(JsonConvert.SerializeObject(records));
             // Process in batches using LINQ chunking and parallel execution
             var batches = records.Chunk(BatchSize);
             var batchTasks = batches.Select(batch => SaveBatchAsync(batch));
@@ -44,7 +51,14 @@ namespace MyBookingsWebApi.Services
         public async Task UploadInventoryAsync(Stream csvStream)
         {
             using var reader = new StreamReader(csvStream);
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                PrepareHeaderForMatch = args => args.Header.ToLower() // Case-insensitive matching
+            };
+
+            using var csv = new CsvReader(reader, config);
+
+
 
             var records = new List<Inventory>();
             await foreach (var record in csv.GetRecordsAsync<InventoryCsvDto>())
@@ -52,10 +66,11 @@ namespace MyBookingsWebApi.Services
                 records.Add(new Inventory { Id = Guid.NewGuid(), Title = record.Title, Description = record.Description, RemainingCount = record.RemainingCount });
 
             }
+            Console.WriteLine(JsonConvert.SerializeObject(records));
+
             var batches = records.Chunk(BatchSize);
             var batchTasks = batches.Select(batch => SaveBatchAsync(batch));
             await Task.WhenAll(batchTasks);
-
 
         }
         private async Task SaveBatchAsync<T>(IEnumerable<T> batch) where T : class
@@ -63,6 +78,7 @@ namespace MyBookingsWebApi.Services
             await using var context = _dbContextFactory.CreateDbContext();
             await context.Set<T>().AddRangeAsync(batch);
             await context.SaveChangesAsync();
+
         }
     }
 }

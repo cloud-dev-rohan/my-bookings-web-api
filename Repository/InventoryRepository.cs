@@ -1,4 +1,5 @@
-﻿using MyBookingsWebApi.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using MyBookingsWebApi.Data;
 using MyBookingsWebApi.Models;
 
 namespace MyBookingsWebApi.Repository
@@ -8,6 +9,7 @@ namespace MyBookingsWebApi.Repository
         Task<Inventory?> GetByIdAsync(Guid id);
         Task AddAsync(Inventory inventory);
         Task UpdateAsync(Inventory inventory);
+        Task<List<Inventory>> GetAllInventoriesAsync();
     }
     public class InventoryRepository : IInventoryRepository
     {
@@ -17,6 +19,10 @@ namespace MyBookingsWebApi.Repository
         public async Task<Inventory?> GetByIdAsync(Guid id)
         {
             return await _context.Inventories.FindAsync(id);
+        }
+        public async Task<List<Inventory>> GetAllInventoriesAsync()
+        {
+            return await _context.Inventories.ToListAsync();
         }
 
         public async Task AddAsync(Inventory inventory)

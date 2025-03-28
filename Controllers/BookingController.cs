@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MyBookingsWebApi.Models;
 using MyBookingsWebApi.Services.MyBookingApp.Services;
 
@@ -31,6 +30,20 @@ namespace MyBookingsWebApi.Controllers
             if (result.Success)
                 return Ok(new { message = result.Message });
             return BadRequest(new { message = result.Message });
+        }
+        //For Internal use case
+        [HttpGet("all-bookings")]
+        public async Task<IActionResult> GetAllBookings()
+        {
+            var bookings = await _bookingService.GetAllBookingsAsync();
+            return Ok(bookings);
+        }
+
+        [HttpGet("trip-details")]
+        public async Task<IActionResult> GetTripDetails()
+        {
+            var trips = await _bookingService.GetTripDetailsAsync();
+            return Ok(trips);
         }
     }
 }

@@ -12,6 +12,8 @@
         {
             Task<(bool Success, string Message, Guid? BookingId)> BookAsync(BookingRequest request);
             Task<(bool Success, string Message)> CancelAsync(Guid bookingId);
+            Task<List<Booking>> GetAllBookingsAsync();
+            Task<List<Inventory>> GetTripDetailsAsync();
         }
         public class BookingService : IBookingService
         {
@@ -118,6 +120,15 @@
                     return (false, $"Cancellation failed: {ex.Message}");
                 }
 
+            }
+
+            public Task<List<Booking>> GetAllBookingsAsync()
+            {
+                return _bookingRepo.GetAllBookingsAsync();
+            }
+            public Task<List<Inventory>> GetTripDetailsAsync()
+            {
+                return _inventoryRepo.GetAllInventoriesAsync();
             }
         }
     }
