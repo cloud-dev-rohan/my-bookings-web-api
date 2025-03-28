@@ -258,6 +258,3 @@ Once deployed, you can access the API:
 
 ---
 
-## Conclusion
-This guide provides a step-by-step approach to setting up, running, and deploying the **MyBookingsWebApi** project to **Azure App Service** and **Azure Kubernetes Service (AKS)**. Let me know if you need further assistance!
-
