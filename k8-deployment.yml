@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: webapi
-          image: youracr.azurecr.io/webapi:latest
+          image: youracr.azurecr.io/webapi:latest #this will change according the image of acr pushed to azure acr
           ports:
             - containerPort: 8080
           env:
@@ -123,10 +123,12 @@ spec:
   selector:
     app: rabbitmq
   ports:
-    - protocol: TCP
+    - name: amqp
+      protocol: TCP
       port: 5672
       targetPort: 5672
-    - protocol: TCP
+    - name: management
+      protocol: TCP
       port: 15672
       targetPort: 15672
   type: ClusterIP
