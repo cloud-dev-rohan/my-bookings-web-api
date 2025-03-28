@@ -1,16 +1,78 @@
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using MyBookingsWebApi.Data;
 using MyBookingsWebApi.Repository;
 using MyBookingsWebApi.Services;
-using MyBookingsWebApi.Services.MyBookingApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
         npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)));
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<MemberBatchConsumer>();
+    x.AddConsumer<InventoryBatchConsumer>();
 
-builder.Services.AddScoped<ICsvUploadService,CsvUploadService>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        var rabbitMqHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "rabbitmq://rabbitmq";
+        var rabbitMqUser = Environment.GetEnvironmentVariable("RABBITMQ_USER") ?? "guest";
+        var rabbitMqPass = Environment.GetEnvironmentVariable("RABBITMQ_PASS") ?? "guest";
+
+        cfg.Host(rabbitMqHost, h =>
+        {
+            h.Username(rabbitMqUser);
+            h.Password(rabbitMqPass);
+        });
+
+        // Member Batch Queue
+        cfg.ReceiveEndpoint("member_batch_queue", e =>
+        {
+            e.ConfigureConsumer<MemberBatchConsumer>(context);
+
+            // Retry mechanism
+            e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+
+            // Delayed redelivery
+            e.UseDelayedRedelivery(r => r.Incremental(3, TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2)));
+
+            // Configure DLX (Dead Letter Exchange)
+        });
+
+        // Inventory Batch Queue
+        cfg.ReceiveEndpoint("inventory_batch_queue", e =>
+        {
+            e.ConfigureConsumer<InventoryBatchConsumer>(context);
+
+            // Retry mechanism
+            e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+
+            // Delayed redelivery
+            e.UseDelayedRedelivery(r => r.Incremental(3, TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2)));
+
+            // Configure DLX (Dead Letter Exchange)
+        });
+
+        /* // Dead-letter queue for Member
+         cfg.ReceiveEndpoint("member_batch_dlq", e =>
+         {
+             e.ConfigureConsumer<DeadLetterConsumer>(context);
+         });
+
+         // Dead-letter queue for Inventory
+         cfg.ReceiveEndpoint("inventory_batch_dlq", e =>
+         {
+             e.ConfigureConsumer<DeadLetterConsumer>(context);
+         });*/
+    });
+});
+
+
+// Use AsyncUploadCsvService for processing inventory upload asyn manner in batches otherwise use CsvUploadService
+
+builder.Services.AddScoped<ICsvUploadService, AsyncUploadCsvService>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();

@@ -11,6 +11,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=bookings_db;Port=5432;Database=mydb;Username=myuser;Password=mypassword
+      - RABBITMQ_HOST=rabbitmq://rabbitmq
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASS=guest
     depends_on:
       - bookings_db
       - rabbitmq
@@ -33,11 +36,19 @@ services:
     container_name: rabbitmq
     restart: always
     ports:
-      - "5672:5672"   # RabbitMQ message broker port
-      - "15672:15672" # RabbitMQ Management UI
+      - "5672:5672"  # RabbitMQ message broker
+      - "15672:15672" # RabbitMQ management UI
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
 
   pgadmin:
     image: dpage/pgadmin4
@@ -68,3 +79,4 @@ volumes:
   pgdata:
   pgadmin-data:
   portainer_data:
+  rabbitmq_data:

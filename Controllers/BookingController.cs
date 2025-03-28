@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBookingsWebApi.Models;
-using MyBookingsWebApi.Services.MyBookingApp.Services;
+using MyBookingsWebApi.Services;
 
 namespace MyBookingsWebApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class BookingController : ControllerBase
     {
         private readonly IBookingService _bookingService;
