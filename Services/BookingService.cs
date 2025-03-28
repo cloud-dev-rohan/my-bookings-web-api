@@ -72,7 +72,6 @@ namespace MyBookingsWebApi.Services
                 return (false, "No inventory available", null);
             }
 
-            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
                 var booking = new Booking
@@ -88,14 +87,12 @@ namespace MyBookingsWebApi.Services
                 inventory.RemainingCount--;
 
                 await _dbContext.SaveChangesAsync();
-                await transaction.CommitAsync();
 
                 _logger.LogInformation("Booking successful: BookingId {BookingId}", booking.Id);
                 return (true, "Booking successful", booking.Id);
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
                 _logger.LogError(ex, "Booking failed for MemberId {MemberId}, TripId {TripId}", request.MemberId, request.TripId);
                 return (false, $"Booking failed: {ex.Message}", null);
             }
@@ -120,7 +117,6 @@ namespace MyBookingsWebApi.Services
                 return (false, "Data inconsistency");
             }
 
-            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
                 await _bookingRepo.RemoveAsync(booking);
@@ -128,14 +124,12 @@ namespace MyBookingsWebApi.Services
                 inventory.RemainingCount++;
 
                 await _dbContext.SaveChangesAsync();
-                await transaction.CommitAsync();
 
                 _logger.LogInformation("Cancellation successful for BookingId {BookingId}", bookingId);
                 return (true, "Cancellation successful");
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
                 _logger.LogError(ex, "Cancellation failed for BookingId {BookingId}", bookingId);
                 return (false, $"Cancellation failed: {ex.Message}");
             }
