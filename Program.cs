@@ -3,9 +3,31 @@ using Microsoft.EntityFrameworkCore;
 using MyBookingsWebApi.Data;
 using MyBookingsWebApi.Repository;
 using MyBookingsWebApi.Services;
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+var elasticSerchUri = Environment.GetEnvironmentVariable("ELASTICSEARCH_HOST");
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(elasticSerchUri)) // Change to your Elasticsearch URL
+    {
+        IndexFormat = "webapi-logs-{0:yyyy.MM.dd}",  // Name of the index
+        AutoRegisterTemplate = true,  // Registers index template automatically
+        NumberOfShards = 1,
+        NumberOfReplicas = 1,
+        EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog,
+        FailureCallback = e => Console.WriteLine($"Failed to log: {e.Exception}"),  // Debugging failures
+        BufferBaseFilename = "logs/buffer"  // Enables disk buffering in case ES is down
+    })
+    .CreateLogger();
+builder.Host.UseSerilog();
+
+;
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
         npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)));
@@ -89,6 +111,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseSerilogRequestLogging();
 // Automatically apply migrations at startup only for lower environment
 using (var scope = app.Services.CreateScope())
 {

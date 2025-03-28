@@ -14,9 +14,18 @@ services:
       - RABBITMQ_HOST=rabbitmq://rabbitmq
       - RABBITMQ_USER=guest
       - RABBITMQ_PASS=guest
+      - ELASTICSEARCH_HOST=http://elasticsearch:9200
+      - Logging__LogLevel__Default=Information
+      - Logging__LogLevel__Microsoft=Warning
+      - Logging__LogLevel__System=Warning
+      - Serilog__WriteTo__0__Name=Elasticsearch
+      - Serilog__WriteTo__0__Args__NodeUris=http://elasticsearch:9200
+      - Serilog__WriteTo__0__Args__AutoRegisterTemplate=true
+      - Serilog__WriteTo__0__Args__AutoRegisterTemplateVersion=ESv7
     depends_on:
       - bookings_db
       - rabbitmq
+      - elasticsearch
 
   bookings_db:
     image: postgres:15
@@ -49,6 +58,26 @@ services:
       timeout: 10s
       retries: 5
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.5
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.5
+    container_name: kibana
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
 
   pgadmin:
     image: dpage/pgadmin4
@@ -80,3 +109,5 @@ volumes:
   pgadmin-data:
   portainer_data:
   rabbitmq_data:
+  elasticsearch_data:
+    driver: local  
