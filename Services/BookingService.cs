@@ -12,7 +12,7 @@
         {
             Task<(bool Success, string Message, Guid? BookingId)> BookAsync(BookingRequest request);
             Task<(bool Success, string Message)> CancelAsync(Guid bookingId);
-            Task<List<Booking>> GetAllBookingsAsync();
+            Task<List<Booking>> GetAllBookingsByMemberIdAsync(Guid memberId);
             Task<List<Inventory>> GetTripDetailsAsync();
         }
         public class BookingService : IBookingService
@@ -44,7 +44,7 @@
                 if (member == null)
                     return (false, "Member not found", null);
 
-                var inventory = await _inventoryRepo.GetByIdAsync(request.InventoryId);
+                var inventory = await _inventoryRepo.GetByIdAsync(request.TripId);
 
                 if (inventory == null)
                     return (false, "Inventory not found", null);
@@ -122,9 +122,9 @@
 
             }
 
-            public Task<List<Booking>> GetAllBookingsAsync()
+            public Task<List<Booking>> GetAllBookingsByMemberIdAsync(Guid memberId)
             {
-                return _bookingRepo.GetAllBookingsAsync();
+                return _bookingRepo.GetAllBookingsByMemberIdAsync(memberId);
             }
             public Task<List<Inventory>> GetTripDetailsAsync()
             {

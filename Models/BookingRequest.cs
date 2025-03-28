@@ -3,6 +3,6 @@
     public class BookingRequest
     {
         public Guid MemberId { get; set; }
-        public Guid InventoryId { get; set; }
+        public Guid TripId { get; set; }
     }
 }

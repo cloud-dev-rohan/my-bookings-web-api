@@ -9,7 +9,7 @@ namespace MyBookingsWebApi.Repository
         Task<Booking?> GetByIdAsync(Guid id);
         Task AddAsync(Booking booking);
         Task RemoveAsync(Booking booking);
-        Task<List<Booking>> GetAllBookingsAsync();
+        Task<List<Booking>> GetAllBookingsByMemberIdAsync(Guid memberId);
     }
     public class BookingRepository : IBookingRepository
     {
@@ -20,9 +20,9 @@ namespace MyBookingsWebApi.Repository
         {
             return await _context.Bookings.FindAsync(id);
         }
-        public async Task<List<Booking>> GetAllBookingsAsync()
+        public async Task<List<Booking>> GetAllBookingsByMemberIdAsync(Guid memberId)
         {
-            return await _context.Bookings.ToListAsync();
+            return await _context.Bookings.Where(x => x.MemberId == memberId).ToListAsync();
         }
         public async Task AddAsync(Booking booking)
         {

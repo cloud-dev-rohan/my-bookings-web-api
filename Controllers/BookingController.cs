@@ -31,11 +31,10 @@ namespace MyBookingsWebApi.Controllers
                 return Ok(new { message = result.Message });
             return BadRequest(new { message = result.Message });
         }
-        //For Internal use case
-        [HttpGet("all-bookings")]
-        public async Task<IActionResult> GetAllBookings()
+        [HttpGet("bookings/{memberId}")]
+        public async Task<IActionResult> GetAllBookings(Guid memberId)
         {
-            var bookings = await _bookingService.GetAllBookingsAsync();
+            var bookings = await _bookingService.GetAllBookingsByMemberIdAsync(memberId);
             return Ok(bookings);
         }
 
