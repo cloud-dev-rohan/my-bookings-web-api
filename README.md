@@ -215,7 +215,7 @@ spec:
 trigger:
   branches:
     include:
-      - main
+      - master
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -255,7 +255,6 @@ stages:
 ## Verifying the Deployment
 Once deployed, you can access the API:
 - **Azure App Service:** `https://mybookingswebapi.azurewebsites.net`
-- **AKS Load Balancer:** Use `kubectl get svc` to get the external IP
 
 ---
 
