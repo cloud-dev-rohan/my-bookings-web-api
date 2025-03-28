@@ -6,16 +6,16 @@ namespace MyBookingsWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UploadController : ControllerBase
+    public class DataManagementController : ControllerBase
     {
         private readonly ICsvUploadService _csvUploadService;
 
-        public UploadController(ICsvUploadService csvUploadService)
+        public DataManagementController(ICsvUploadService csvUploadService)
         {
             _csvUploadService = csvUploadService;
         }
 
-        [HttpPost("members")]
+        [HttpPost("upload-members")]
         public async Task<IActionResult> UploadMembers(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -26,7 +26,7 @@ namespace MyBookingsWebApi.Controllers
             return Ok("Members uploaded successfully");
         }
 
-        [HttpPost("inventory")]
+        [HttpPost("upload-inventory")]
         public async Task<IActionResult> UploadInventory(IFormFile file)
         {
             if (file == null || file.Length == 0)
