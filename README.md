@@ -6,7 +6,7 @@ MyBookingsWebApi is a scalable and fault-tolerant web API built using **.NET 8.0
 ## Tech Stack
 - **Backend:** .NET 8.0 Web API
 - **Database:** PostgreSQL
-- **Message Broker:** RabbitMQ
+- **Message Broker:** RabbitMQ, MassTransit
 - **Containerization:** Docker, Docker Compose
 - **CI/CD:** Azure Pipelines
 - **Deployment:** Azure App Service, Azure Kubernetes Service (AKS)
