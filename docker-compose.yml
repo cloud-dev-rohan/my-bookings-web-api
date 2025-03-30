@@ -4,7 +4,7 @@ services:
   app:
     container_name: webapi
     build:
-      context: .
+      context: MyBookingsWebApi
       dockerfile: Dockerfile
     ports:
       - "5000:8080"

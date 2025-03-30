@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBookingsWebApi", "MyBookingsWebApi.csproj", "{09A1AAD4-ADFC-4BC5-88F1-3E29BFE1C447}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBookingsWebApi", "MyBookingsWebApi\MyBookingsWebApi.csproj", "{09A1AAD4-ADFC-4BC5-88F1-3E29BFE1C447}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{5CF9AA60-23EB-4613-BED2-14C3BCFA49F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{09A1AAD4-ADFC-4BC5-88F1-3E29BFE1C447}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09A1AAD4-ADFC-4BC5-88F1-3E29BFE1C447}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09A1AAD4-ADFC-4BC5-88F1-3E29BFE1C447}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CF9AA60-23EB-4613-BED2-14C3BCFA49F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CF9AA60-23EB-4613-BED2-14C3BCFA49F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CF9AA60-23EB-4613-BED2-14C3BCFA49F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CF9AA60-23EB-4613-BED2-14C3BCFA49F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
