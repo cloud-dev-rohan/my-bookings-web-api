@@ -24,9 +24,9 @@ namespace MyBookingsWebApi.Services
             {
                 PrepareHeaderForMatch = args => args.Header.ToLower() // Case-insensitive matching
             };
-
             using var csv = new CsvReader(reader, config);
 
+            csv.Context.RegisterClassMap<InventoryCsvMap>();
 
 
             var records = new List<Inventory>();
@@ -55,6 +55,8 @@ namespace MyBookingsWebApi.Services
             };
 
             using var csv = new CsvReader(reader, config);
+            csv.Context.RegisterClassMap<MemberCsvMap>();
+
             var records = new List<Member>();
 
             await foreach (var record in csv.GetRecordsAsync<MemberCsvDto>())
@@ -63,7 +65,7 @@ namespace MyBookingsWebApi.Services
                 {
                     Id = Guid.NewGuid(),
                     FirstName = record.Name,
-                    LastName = record.SirName,
+                    LastName = record.Surname,
                     BookingCount = record.BookingCount,
                     DateJoined = record.DateJoined
                 });

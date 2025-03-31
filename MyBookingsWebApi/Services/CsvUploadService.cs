@@ -27,6 +27,8 @@ namespace MyBookingsWebApi.Services
             };
 
             using var csv = new CsvReader(reader, config);
+            csv.Context.RegisterClassMap<MemberCsvMap>();
+
 
             var records = new List<Member>();
 
@@ -36,7 +38,7 @@ namespace MyBookingsWebApi.Services
                 {
                     Id = Guid.NewGuid(),
                     FirstName = record.Name,
-                    LastName = record.SirName,
+                    LastName = record.Surname,
                     BookingCount = record.BookingCount,
                     DateJoined = record.DateJoined
                 });
@@ -58,7 +60,7 @@ namespace MyBookingsWebApi.Services
 
             using var csv = new CsvReader(reader, config);
 
-
+            csv.Context.RegisterClassMap<InventoryCsvMap>();
 
             var records = new List<Inventory>();
             await foreach (var record in csv.GetRecordsAsync<InventoryCsvDto>())
