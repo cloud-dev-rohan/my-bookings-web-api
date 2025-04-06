@@ -25,7 +25,7 @@ Ensure you have the following installed:
 ## Running Locally with Docker Compose
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your-repo/MyBookingsWebApi.git
+   git clone https://github.com/cloud-dev-rohan/my-bookings-web-api.git
    cd MyBookingsWebApi
    ```
 2. Build and run the services:
