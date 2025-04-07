@@ -3,7 +3,7 @@
 ## Overview
 MyBookingsWebApi is a scalable and fault-tolerant web API built using **.NET 8.0**, **PostgreSQL**, and **RabbitMQ**. It allows users to upload CSV files, manage inventory bookings, and handle cancellations.
 ## Architecture
-![my_bookings_webapi_architecture drawio](https://github.com/user-attachments/assets/7099a4d3-dcd8-4a9a-ab53-dffcc286bc0a)
+![architecture_webapi drawio](https://github.com/user-attachments/assets/b5561e13-5786-447a-a9f9-5c3fb6272bc3)
 
 ## Tech Stack
 - **Backend:** .NET 8.0 Web API
