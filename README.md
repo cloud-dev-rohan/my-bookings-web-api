@@ -26,7 +26,7 @@ Ensure you have the following installed:
 1. Clone the repository:
    ```sh
    git clone https://github.com/cloud-dev-rohan/my-bookings-web-api.git
-   cd my-bookings-web-api
+   change the directory to MyBookingsWebApi
    ```
 2. Build and run the services:
    ```sh
