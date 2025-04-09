@@ -45,6 +45,45 @@ namespace MyBookingsWebApi.Services
                 await endpoint.Send(new InventoryBatchMessage { Inventories = [.. batch] });
             }
         }
+        public async Task UploadMembersForLargeFileAsync(Stream csvStream)
+        {
+            using var reader = new StreamReader(csvStream);
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                PrepareHeaderForMatch = args => args.Header.ToLower(),
+                BufferSize = 1024 * 64 // Optional: larger buffer for performance
+            };
+
+            using var csv = new CsvReader(reader, config);
+            csv.Context.RegisterClassMap<MemberCsvMap>();
+
+            var endpoint = await _bus.GetSendEndpoint(new Uri("queue:member_batch_queue"));
+
+            var batch = new List<Member>();
+            await foreach (var record in csv.GetRecordsAsync<MemberCsvDto>())
+            {
+                batch.Add(new Member
+                {
+                    Id = Guid.NewGuid(),
+                    FirstName = record.Name,
+                    LastName = record.Surname,
+                    BookingCount = record.BookingCount,
+                    DateJoined = record.DateJoined
+                });
+
+                if (batch.Count >= BatchSize)
+                {
+                    await endpoint.Send(new MemberBatchMessage { Members = [.. batch] });
+                    batch.Clear(); // Release memory
+                }
+            }
+
+            // Send any remaining records
+            if (batch.Count > 0)
+            {
+                await endpoint.Send(new MemberBatchMessage { Members = [.. batch] });
+            }
+        }
 
         public async Task UploadMembersAsync(Stream csvStream)
         {
@@ -53,6 +92,7 @@ namespace MyBookingsWebApi.Services
             {
                 PrepareHeaderForMatch = args => args.Header.ToLower()
             };
+
 
             using var csv = new CsvReader(reader, config);
             csv.Context.RegisterClassMap<MemberCsvMap>();
